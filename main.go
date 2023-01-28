@@ -15,6 +15,7 @@ import (
 func main() {
 	println("Starting...")
 	apiClient := apiclient.NewClient(os.Getenv("PUNYSHORT_BASE_URL"), os.Getenv("PUNYSHORT_KEY"))
+	errorUrl := os.Getenv("PUNYSHORT_ERROR_URL")
 
 	followRedirect := func(writer http.ResponseWriter, request *http.Request) {
 		ip, _ := helper.GetIP(request, os.Getenv("PUNYSHORT_IP_FORWARDING") == "true")
@@ -28,12 +29,14 @@ func main() {
 		})
 
 		if err != nil {
-			log.Fatalln(err)
+			log.Println(err)
+
+			writer.Header().Set("Location", errorUrl+"?error=Internal")
+			writer.WriteHeader(307)
 			return
 		}
 
 		if shorten.Error {
-			errorUrl := os.Getenv("PUNYSHORT_ERROR_URL")
 			if errorUrl != "" {
 				writer.Header().Set("Location", errorUrl+"?error="+shorten.Exception)
 				writer.WriteHeader(307)

@@ -1,4 +1,5 @@
 # Punyshort Redirection Proxy
+[Read more on Punyshort on the Punyshort Main project](https://github.com/interaapps/punyshort)
 
 ```bash
 docker run -p 80:80 \
